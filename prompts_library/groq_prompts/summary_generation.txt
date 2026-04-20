@@ -1,0 +1,108 @@
+# SUMMARY GENERATION - GROQ
+
+## PURPOSE
+Generate concise summaries of fracture analysis for quick review, handoffs, or patient communication.
+
+## INPUT
+- Full analysis results: {analysis}
+- Patient info: {patient_info}
+- Treatment plan: {treatment}
+
+## TASK
+Create 3 types of summaries:
+
+### 1. CLINICAL SUMMARY (for healthcare providers)
+**Length:** 3-4 sentences
+**Audience:** Doctors, nurses
+**Focus:** Clinical facts, actions needed
+
+### 2. PATIENT SUMMARY (for patients/family)
+**Length:** 4-5 sentences
+**Audience:** Patients, family members
+**Focus:** Simple language, what to expect
+
+### 3. HANDOFF SUMMARY (for shift changes)
+**Length:** 2-3 sentences
+**Audience:** Incoming healthcare team
+**Focus:** Current status, pending actions
+
+## OUTPUT FORMAT
+
+```
+=== CLINICAL SUMMARY ===
+[3-4 sentences with key clinical facts, diagnosis, and immediate actions]
+
+=== PATIENT SUMMARY ===
+[4-5 sentences in simple language explaining condition and next steps]
+
+=== HANDOFF SUMMARY ===
+[2-3 sentences covering current status and what needs to be done]
+```
+
+## EXAMPLE
+
+**Input:**
+- Diagnosis: Distal radius fracture
+- Severity: Moderate
+- Plan: Reduction and casting
+- Patient: 45F, FOOSH injury
+
+**Output:**
+```
+=== CLINICAL SUMMARY ===
+45-year-old female with displaced distal radius fracture (Colles' type) following FOOSH injury. AI analysis shows 94% confidence with high model agreement. Fracture demonstrates 5mm dorsal displacement requiring closed reduction. Orthopedic consultation scheduled for reduction and short arm cast application.
+
+=== PATIENT SUMMARY ===
+You have a broken wrist bone (distal radius fracture) from your fall. The break is displaced and will need to be realigned by an orthopedic specialist. You'll receive a cast that you'll wear for about 6 weeks. Most people recover well with proper treatment and physical therapy. We'll give you pain medication and schedule your specialist appointment within 24 hours.
+
+=== HANDOFF SUMMARY ===
+45F with distal radius fracture, volar splint applied, pain controlled. Awaiting orthopedic consult in AM for closed reduction. Monitor neurovascular status q2h, currently intact.
+```
+
+## GUIDELINES
+
+### Clinical Summary:
+- Medical terminology OK
+- Include key findings
+- State treatment plan
+- Mention urgency
+
+### Patient Summary:
+- Simple, clear language
+- Avoid medical jargon
+- Reassuring tone
+- Explain next steps
+- Set expectations
+
+### Handoff Summary:
+- Current status
+- Pending actions
+- Monitoring needs
+- Critical info only
+
+## TONE GUIDE
+
+**Clinical:** Professional, factual, precise
+**Patient:** Caring, clear, reassuring
+**Handoff:** Brief, actionable, status-focused
+
+## COMMON PHRASES
+
+### For Patients:
+- "You have a broken..."
+- "This will heal with..."
+- "Most people recover..."
+- "We'll help you with..."
+- "What to expect..."
+
+### For Handoff:
+- "Awaiting..."
+- "Monitor for..."
+- "Pending..."
+- "Currently..."
+- "Follow up..."
+
+---
+
+**Use this for:** Quick summaries, patient communication, shift handoffs
+**Speed:** Optimized for Groq's fast generation

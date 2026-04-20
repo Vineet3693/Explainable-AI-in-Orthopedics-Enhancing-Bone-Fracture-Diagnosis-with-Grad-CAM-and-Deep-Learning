@@ -1,0 +1,200 @@
+# Training Configuration for Fracture Detection AI
+#
+# PURPOSE:
+#   Centralized configuration for model training. Separates hyperparameters
+#   from code for easy experimentation and reproducibility.
+#
+# WHY YAML:
+#   ✅ Human-readable and editable
+#   ✅ Supports comments (unlike JSON)
+#   ✅ Hierarchical structure
+#   ✅ Standard in ML projects
+#   ✅ Easy version control
+#
+# ALTERNATIVES:
+#   - JSON: No comments, less readable
+#   - Python dict: Requires code changes
+#   - TOML: Less common in ML
+#   - Hydra: More complex, overkill for this
+#
+# HOW TO USE:
+#   python scripts/train.py --config configs/training_config.yaml
+
+# Model Configuration
+# WHY SEPARATE: Easy to switch between architectures
+model:
+  architecture: "resnet50" # Options: resnet50, vgg16, efficientnet_b0, efficientnet_b1
+  # WHY RESNET50: Best balance of accuracy and speed for medical imaging
+  # ALTERNATIVE: efficientnet_b0 (smaller, faster) or vgg16 (simpler)
+
+  input_size: 224 # Input image size (224x224)
+  # WHY 224: Standard for ImageNet pre-trained models
+  # IMPACT: Changing this requires retraining from scratch
+
+  num_classes: 1 # Binary classification (fracture/normal)
+  # WHY 1: Single sigmoid output for binary classification
+  # ALTERNATIVE: 2 with softmax (more explicit but unnecessary)
+
+  freeze_layers: 100 # Number of base layers to freeze initially
+  # WHY FREEZE: Prevents catastrophic forgetting of ImageNet features
+  # STRATEGY: Freeze → train head → unfreeze → fine-tune
+  # IMPACT: Faster initial training, better transfer learning
+
+  dropout_rate: 0.5 # Dropout rate for regularization
+  # WHY 0.5: Standard value, prevents overfitting
+  # TUNING: Increase if overfitting, decrease if underfitting
+  # RANGE: 0.3-0.7 typical for medical imaging
+
+# Data Configuration
+data:
+  data_dir: "data/processed" # Path to processed data
+  # STRUCTURE: data_dir/split/class/images
+
+  batch_size: 32 # Batch size for training
+  # WHY 32: Good balance for most GPUs (8-16GB VRAM)
+  # TUNING: Increase for larger GPUs, decrease for smaller
+  # IMPACT: Larger = faster but more memory, affects gradient stability
+
+  image_size: 224 # Must match model.input_size
+
+  augmentation: true # Enable data augmentation
+  # WHY: Increases effective dataset size, prevents overfitting
+  # IMPACT: 10-15% accuracy improvement on small datasets
+
+  augmentation_strength: "medium" # Options: light, medium, heavy
+  # WHY MEDIUM: Good balance for medical images
+  # LIGHT: Minimal augmentation (safe but less effective)
+  # HEAVY: Aggressive augmentation (may distort medical features)
+
+  num_workers: 4 # Number of data loading workers
+  # WHY: Parallel data loading speeds up training
+  # TUNING: Set to number of CPU cores (but not all)
+  # IMPACT: Higher = faster loading but more CPU usage
+
+# Training Configuration
+training:
+  epochs: 50 # Maximum number of training epochs
+  # WHY 50: Usually sufficient with early stopping
+  # TYPICAL: 30-100 epochs for medical imaging
+
+  optimizer: "adam" # Options: adam, sgd, adamw
+  # WHY ADAM: Adaptive learning rate, works well out of the box
+  # ALTERNATIVE: sgd (better generalization but needs tuning)
+  # COMPARISON:
+  #   Adam: Fast convergence, easy to use
+  #   SGD: Better final accuracy, needs learning rate schedule
+  #   AdamW: Adam + weight decay (best of both)
+
+  learning_rate: 0.001 # Initial learning rate
+  # WHY 1e-3: Standard for Adam optimizer
+  # TUNING: Reduce if training unstable, increase if too slow
+  # SCHEDULE: Will be reduced by ReduceLROnPlateau callback
+
+  loss: "binary_crossentropy" # Loss function
+  # WHY: Standard for binary classification with sigmoid
+  # ALTERNATIVE: focal_loss for class imbalance
+
+  class_weights: # Weights for imbalanced classes
+    normal: 1.0
+    fracture: 1.5 # Slightly higher weight for fractures
+    # WHY: Medical AI should be more sensitive to fractures
+    # IMPACT: Reduces false negatives (critical for patient safety)
+    # TUNING: Increase if missing too many fractures
+
+# Callbacks Configuration
+callbacks:
+  early_stopping:
+    enabled: true
+    patience: 10 # Stop if no improvement for 10 epochs
+    # WHY: Prevents overfitting and saves time
+    # IMPACT: Automatically stops when model stops improving
+
+    monitor: "val_loss" # Metric to monitor
+    # WHY VAL_LOSS: Best indicator of generalization
+    # ALTERNATIVE: val_accuracy (but can be misleading)
+
+    restore_best_weights: true # Restore best model
+    # WHY: Ensures we keep the best model, not the last
+
+  reduce_lr:
+    enabled: true
+    patience: 5 # Reduce LR if no improvement for 5 epochs
+    # WHY: Helps escape local minima
+    # IMPACT: Better final accuracy
+
+    factor: 0.5 # Multiply LR by 0.5
+    # WHY 0.5: Standard reduction factor
+    # ALTERNATIVE: 0.1 (more aggressive)
+
+    min_lr: 0.0000001 # Minimum learning rate
+    # WHY: Prevents LR from becoming too small
+
+  model_checkpoint:
+    enabled: true
+    save_best_only: true # Only save best model
+    # WHY: Saves disk space, keeps best version
+
+    monitor: "val_loss"
+    mode: "min" # Lower is better for loss
+
+  tensorboard:
+    enabled: true
+    log_dir: "logs/tensorboard"
+    # WHY: Visualize training progress
+    # USAGE: tensorboard --logdir logs/tensorboard
+
+# Validation Configuration
+validation:
+  validation_split: 0.15 # 15% for validation
+  # WHY: Separate data for hyperparameter tuning
+  # TYPICAL: 10-20% for medical datasets
+
+  metrics: # Metrics to track
+    - "accuracy"
+    - "precision"
+    - "recall" # Sensitivity - CRITICAL for medical AI
+    - "auc" # Area under ROC curve
+    # WHY THESE: Comprehensive evaluation
+    # MEDICAL AI: Recall (sensitivity) is most important!
+
+# Fine-tuning Configuration
+fine_tuning:
+  enabled: true # Enable fine-tuning after initial training
+  # WHY: Better accuracy through gradual unfreezing
+
+  unfreeze_at_epoch: 30 # Start fine-tuning at epoch 30
+  # WHY: After head is trained, adapt base layers
+
+  unfreeze_layers: 50 # Number of layers to unfreeze
+  # WHY: Gradual unfreezing prevents catastrophic forgetting
+  # STRATEGY: Unfreeze top layers first
+
+  fine_tune_lr: 0.0001 # Lower learning rate for fine-tuning
+  # WHY 10x LOWER: Prevents destroying pre-trained features
+  # IMPACT: Slower but more stable adaptation
+
+# Monitoring Configuration
+monitoring:
+  log_interval: 10 # Log metrics every 10 batches
+  # WHY: Frequent enough to track progress
+
+  save_gradcam: true # Save Grad-CAM visualizations
+  # WHY: Explainability for medical AI
+  # IMPACT: Helps understand model decisions
+
+  gradcam_frequency: 5 # Generate Grad-CAM every 5 epochs
+  # WHY: Monitor what model is learning
+
+  track_false_negatives: true # Track missed fractures
+  # WHY: Critical for patient safety
+  # IMPACT: Alerts if FN rate too high
+
+# Reproducibility
+reproducibility:
+  random_seed: 42 # Random seed for reproducibility
+  # WHY: Ensures same results across runs
+  # IMPACT: Critical for research and debugging
+
+  deterministic: true # Use deterministic algorithms
+  # WHY: Exact reproducibility (slightly slower)
+  # TRADE-OFF: Reproducibility vs speed

@@ -1,0 +1,4 @@
+,accuracy,auc
+VGG16,0.7701,0.8366
+EfficientNetB0,0.7216,0.7931
+EfficientNetB1,0.7163,0.7751

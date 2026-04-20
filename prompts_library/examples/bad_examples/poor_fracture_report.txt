@@ -1,0 +1,186 @@
+# BAD EXAMPLE - Poor Fracture Report
+
+## Scenario
+Same 45-year-old female with wrist injury
+
+## AI Predictions
+Same as good example (94% fractured)
+
+---
+
+## EXAMPLE OF BAD ANALYSIS
+
+```
+FRACTURE ANALYSIS
+
+The patient has a fracture. The AI says it's fractured with high confidence.
+
+The bone is broken. It looks bad. The patient should see a doctor soon.
+
+There is some displacement and the fracture is visible on the X-ray.
+
+Recommendation: Get treatment.
+
+AI models agree it's fractured.
+```
+
+---
+
+## WHY THIS IS BAD
+
+### ❌ Problems:
+
+1. **Too Vague**
+   - "looks bad" - how bad?
+   - "some displacement" - how much?
+   - "see a doctor soon" - how soon?
+   - No specific measurements
+
+2. **Missing Critical Information**
+   - No fracture location specified
+   - No fracture type or pattern
+   - No severity assessment
+   - No specific recommendations
+   - No timeline for action
+
+3. **Unprofessional Language**
+   - "looks bad" is not medical terminology
+   - Casual tone inappropriate for medical report
+   - Lacks professional structure
+
+4. **No Clinical Context**
+   - Doesn't mention injury mechanism
+   - No correlation with symptoms
+   - Missing clinical significance
+
+5. **Incomplete Recommendations**
+   - "Get treatment" - what kind?
+   - No specific actions
+   - No prioritization
+   - No specialist mentioned
+
+6. **No Safety Information**
+   - Missing disclaimer
+   - No warning signs listed
+   - No complications mentioned
+   - No urgency level
+
+7. **Poor Organization**
+   - No clear sections
+   - Random order
+   - Hard to scan
+   - Missing structure
+
+8. **Lacks Confidence Assessment**
+   - Just says "high confidence"
+   - Doesn't explain model agreement
+   - No variance mentioned
+   - No interpretation
+
+---
+
+## ANOTHER BAD EXAMPLE - Overconfident
+
+```
+DEFINITIVE DIAGNOSIS: FRACTURED WRIST
+
+This patient DEFINITELY has a distal radius fracture. The AI is 94% sure, 
+which means it's certain. No need for radiologist review since the AI 
+is so confident.
+
+Treatment: The patient MUST have surgery immediately. There's no other option.
+
+This fracture will take exactly 6 weeks to heal and the patient will have 
+100% recovery with no complications.
+
+The AI has diagnosed this correctly and no further imaging is needed.
+```
+
+---
+
+## WHY THIS IS ALSO BAD
+
+### ❌ Major Issues:
+
+1. **Overconfident**
+   - Claims "DEFINITELY" - AI should never be definitive
+   - "No need for radiologist review" - DANGEROUS
+   - "MUST have surgery" - too prescriptive
+   - Guarantees outcomes - inappropriate
+
+2. **Dangerous Advice**
+   - Skipping radiologist confirmation
+   - Definitive treatment without full assessment
+   - Ignoring need for professional judgment
+
+3. **Unrealistic Promises**
+   - "exactly 6 weeks" - healing varies
+   - "100% recovery" - can't guarantee
+   - "no complications" - impossible to promise
+
+4. **Misrepresents AI**
+   - 94% ≠ "certain"
+   - AI assists, doesn't replace doctors
+   - Ignores AI limitations
+
+---
+
+## COMMON MISTAKES TO AVOID
+
+### ❌ Don't:
+- Use vague language ("some", "maybe", "looks like")
+- Skip measurements and specifics
+- Forget disclaimers
+- Be overconfident
+- Guarantee outcomes
+- Skip safety information
+- Use casual language
+- Omit critical details
+- Ignore structure
+- Replace physician judgment
+
+### ✅ Do:
+- Be specific with measurements
+- Use proper medical terminology
+- Include all relevant sections
+- Acknowledge limitations
+- Provide clear recommendations
+- Include safety warnings
+- Maintain professional tone
+- Organize information clearly
+- Emphasize need for confirmation
+- Support clinical decision-making
+
+---
+
+## COMPARISON
+
+| Aspect | Good Example | Bad Example |
+|--------|-------------|-------------|
+| Specificity | "5mm dorsal displacement" | "some displacement" |
+| Timeline | "within 24 hours" | "soon" |
+| Recommendations | "Orthopedic consult, volar splint" | "get treatment" |
+| Confidence | "High (94%) - needs confirmation" | "definitely fractured" |
+| Safety | Disclaimers, warnings included | Missing |
+| Structure | 8 clear sections | Unorganized |
+| Language | Professional medical terms | Casual, vague |
+
+---
+
+## KEY LESSONS
+
+**Bad reports are:**
+- Vague and unhelpful
+- Potentially dangerous
+- Unprofessional
+- Missing critical information
+- Overconfident or underconfident
+
+**Good reports are:**
+- Specific and detailed
+- Safe and responsible
+- Professional
+- Complete
+- Appropriately confident
+
+**Remember:** A bad AI report can lead to poor clinical decisions. Always aim for clarity, completeness, and appropriate caution.

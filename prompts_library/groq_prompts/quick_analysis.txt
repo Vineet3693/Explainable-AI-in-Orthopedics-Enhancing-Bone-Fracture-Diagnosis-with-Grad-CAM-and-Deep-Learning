@@ -1,0 +1,109 @@
+# QUICK FRACTURE ANALYSIS - GROQ
+
+## PURPOSE
+Fast, concise fracture analysis for immediate clinical decision-making. Optimized for Groq's speed.
+
+## INPUT
+- Image: X-ray
+- AI Predictions: {ensemble_confidence}%
+- Models: ResNet50={r50}%, EfficientNetB0={eb0}%, EfficientNetB1={eb1}%
+- Location: {location}
+- Patient: {age}y, {gender}
+
+## TASK
+Provide quick, actionable fracture assessment in under 200 words.
+
+## OUTPUT FORMAT
+
+```
+QUICK ASSESSMENT
+
+FINDING: [Fractured/Non-Fractured/Uncertain]
+CONFIDENCE: [High/Moderate/Low] ({ensemble_confidence}%)
+
+KEY OBSERVATIONS:
+- [Most important finding 1]
+- [Most important finding 2]
+- [Most important finding 3]
+
+SEVERITY: [Minor/Moderate/Severe/Critical]
+
+URGENT ACTIONS:
+1. [Top priority action]
+2. [Second priority action]
+3. [Third priority action]
+
+SPECIALIST: [Yes/No - type if yes]
+TIMELINE: [Immediate/24h/1 week]
+
+RED FLAGS: [Any emergency indicators or "None"]
+
+AI CONSENSUS: [High/Moderate/Low agreement]
+```
+
+## GUIDELINES
+
+**BE:**
+- Concise (max 200 words)
+- Specific
+- Action-oriented
+- Clear about urgency
+
+**INCLUDE:**
+- Primary finding
+- Severity
+- Top 3 actions
+- Urgency level
+
+**SKIP:**
+- Detailed explanations
+- Long descriptions
+- Technical jargon
+- Multiple paragraphs
+
+## EXAMPLE
+
+**Input:**
+- Ensemble: 94% fractured
+- Location: Distal radius
+- Patient: 45F
+
+**Output:**
+```
+QUICK ASSESSMENT
+
+FINDING: Fractured
+CONFIDENCE: High (94%)
+
+KEY OBSERVATIONS:
+- Clear fracture line in distal radius
+- 5mm dorsal displacement
+- Moderate soft tissue swelling
+
+SEVERITY: Moderate
+
+URGENT ACTIONS:
+1. Orthopedic consult within 24h
+2. Volar splint immobilization
+3. Ice, elevate, pain control
+
+SPECIALIST: Yes - Orthopedic surgeon
+TIMELINE: Within 24 hours
+
+RED FLAGS: None (neurovascular intact)
+
+AI CONSENSUS: High agreement (all models 92-96%)
+```
+
+## SPEED OPTIMIZATION
+
+- Use bullet points
+- Short sentences
+- No redundancy
+- Essential info only
+- Clear action items
+
+---
+
+**Use this for:** Emergency department, quick triage, initial assessment
+**Use Gemini for:** Detailed analysis, formal reports, complex cases

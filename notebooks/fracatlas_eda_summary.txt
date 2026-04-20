@@ -1,0 +1,163 @@
+FRACATLAS DATASET - EDA SUMMARY REPORT
+================================================================================
+
+Total Images: 4,083
+Fractured: 717 (17.56%)
+Non-Fractured: 3,366 (82.44%)
+
+ANATOMICAL LOCATIONS:
+  Hand: 1,538
+  Leg: 2,273
+  Hip: 338
+  Shoulder: 349
+  Mixed: 398
+
+VIEW TYPES:
+  Frontal: 2,503
+  Lateral: 1,492
+  Oblique: 418
+
+Hardware: 99
+Multi-scan: 396
+
+
+
+================================================================================
+🏥 FRACATLAS DATASET - EXPLORATORY DATA ANALYSIS
+================================================================================
+
+📂 Loading dataset from: data/raw/FracAtlas/dataset.csv
+✅ Dataset loaded successfully!
+
+================================================================================
+📋 DATASET OVERVIEW
+================================================================================
+Total Images: 4,083
+Total Columns: 13
+Memory Usage: 666.00 KB
+
+📝 Columns:
+   1. image_id
+   2. hand
+   3. leg
+   4. hip
+   5. shoulder
+   6. mixed
+   7. hardware
+   8. multiscan
+   9. fractured
+  10. fracture_count
+  11. frontal
+  12. lateral
+  13. oblique
+
+================================================================================
+🩻 FRACTURE CLASSIFICATION DISTRIBUTION
+================================================================================
+Fractured Images:     717 (17.56%)
+Non-Fractured Images: 3,366 (82.44%)
+Class Balance Ratio:  1:4.69
+
+📊 Fracture Count Distribution:
+  0 fracture(s): 3,366 images
+  1 fracture(s): 546 images
+  2 fracture(s): 146 images
+  3 fracture(s): 17 images
+  4 fracture(s): 7 images
+  5 fracture(s): 1 images
+
+================================================================================
+🦴 ANATOMICAL LOCATION DISTRIBUTION
+================================================================================
+Hand        : 1538 (37.67%)
+Leg         : 2273 (55.67%)
+Hip         :  338 ( 8.28%)
+Shoulder    :  349 ( 8.55%)
+Mixed       :  398 ( 9.75%)
+
+🩻 Fracture Rate by Anatomical Location:
+Hand        :  438/1538 fractured (28.48%)
+Leg         :  263/2273 fractured (11.57%)
+Hip         :   63/ 338 fractured (18.64%)
+Shoulder    :   63/ 349 fractured (18.05%)
+Mixed       :  106/ 398 fractured (26.63%)
+
+================================================================================
+📸 X-RAY VIEW TYPE DISTRIBUTION
+================================================================================
+Frontal     : 2503 (61.30%)
+Lateral     : 1492 (36.54%)
+Oblique     :  418 (10.24%)
+
+================================================================================
+🔧 ADDITIONAL FEATURES
+================================================================================
+Images with Hardware: 99 (2.42%)
+Multi-scan Images:    396 (9.70%)
+
+================================================================================
+🖼️ IMAGE FILES ANALYSIS
+================================================================================
+Fractured folder:     717 images
+Non-fractured folder: 3,366 images
+Total image files:    4,083
+
+================================================================================
+🔍 DATA QUALITY CHECKS
+================================================================================
+Missing Values: 0
+  ✅ No missing values found!
+Duplicate Rows: 0
+  ✅ No duplicate rows found!
+
+📋 Data Consistency:
+  Fractured images with 0 fracture count: 0
+  Non-fractured images with count > 0:    0
+  Images without anatomical location:     0
+  Images without view type:                0
+
+================================================================================
+📈 STATISTICAL SUMMARY
+================================================================================
+              hand          leg          hip  ...      frontal      lateral      oblique
+count  4083.000000  4083.000000  4083.000000  ...  4083.000000  4083.000000  4083.000000
+mean      0.376684     0.556699     0.082782  ...     0.613030     0.365418     0.102376
+std       0.484614     0.496836     0.275587  ...     0.487116     0.481606     0.303179
+min       0.000000     0.000000     0.000000  ...     0.000000     0.000000     0.000000
+25%       0.000000     0.000000     0.000000  ...     0.000000     0.000000     0.000000
+50%       0.000000     1.000000     0.000000  ...     1.000000     0.000000     0.000000
+75%       1.000000     1.000000     0.000000  ...     1.000000     1.000000     0.000000
+max       1.000000     1.000000     1.000000  ...     1.000000     1.000000     1.000000
+
+[8 rows x 12 columns]
+
+================================================================================
+💡 KEY INSIGHTS & RECOMMENDATIONS
+================================================================================
+
+✅ DATASET STRENGTHS:
+  • Well-balanced classes (suitable for binary classification)
+  • Multiple anatomical locations covered
+  • Various X-ray view types (frontal, lateral, oblique)
+  • High data quality (no missing values or duplicates)
+  • Expert annotations available in multiple formats
+
+🎯 RECOMMENDATIONS FOR MODEL TRAINING:
+  1. Use stratified split (70% train, 15% val, 15% test)
+  2. Apply data augmentation (rotation ±15°, zoom 0.1, horizontal flip)
+  3. Normalize images to 224x224 or 512x512
+  4. Try CNN architectures: ResNet50, EfficientNet, VGG16
+  5. Use focal loss or weighted BCE for better performance
+  6. Implement Grad-CAM for explainability
+  7. Monitor both ML metrics and clinical metrics
+
+🚀 NEXT STEPS:
+  1. Preprocess images (resize, normalize)
+  2. Create train/val/test splits
+  3. Set up data augmentation pipeline
+  4. Train baseline model
+  5. Evaluate and iterate
+
+================================================================================
+✅ EDA COMPLETE! Dataset is ready for model training.
+================================================================================

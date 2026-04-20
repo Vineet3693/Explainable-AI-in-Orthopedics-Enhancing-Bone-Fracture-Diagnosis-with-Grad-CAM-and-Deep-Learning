@@ -1,0 +1,301 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Fracture Analysis Response Schema",
+    "description": "Structured schema for AI fracture analysis responses",
+    "type": "object",
+    "required": [
+        "report_id",
+        "timestamp",
+        "primary_findings",
+        "ai_predictions",
+        "recommendations"
+    ],
+    "properties": {
+        "report_id": {
+            "type": "string",
+            "description": "Unique report identifier",
+            "pattern": "^FR-[0-9]{4}-[0-9]{6}$",
+            "example": "FR-2024-001234"
+        },
+        "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Report generation timestamp"
+        },
+        "primary_findings": {
+            "type": "object",
+            "required": [
+                "fracture_present",
+                "confidence_level",
+                "ensemble_confidence"
+            ],
+            "properties": {
+                "fracture_present": {
+                    "type": "string",
+                    "enum": [
+                        "Yes",
+                        "No",
+                        "Uncertain"
+                    ],
+                    "description": "Primary finding"
+                },
+                "confidence_level": {
+                    "type": "string",
+                    "enum": [
+                        "High",
+                        "Moderate",
+                        "Low"
+                    ],
+                    "description": "Overall confidence in finding"
+                },
+                "ensemble_confidence": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100,
+                    "description": "Ensemble model confidence percentage"
+                }
+            }
+        },
+        "detailed_observations": {
+            "type": "object",
+            "properties": {
+                "bone_integrity": {
+                    "type": "string",
+                    "description": "Description of bone continuity and structure"
+                },
+                "alignment": {
+                    "type": "string",
+                    "description": "Description of bone alignment"
+                },
+                "notable_features": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "List of notable observations"
+                }
+            }
+        },
+        "fracture_details": {
+            "type": "object",
+            "description": "Detailed fracture characteristics (if fracture present)",
+            "properties": {
+                "location": {
+                    "type": "string",
+                    "description": "Anatomical location of fracture"
+                },
+                "type": {
+                    "type": "string",
+                    "enum": [
+                        "Complete",
+                        "Incomplete",
+                        "Simple",
+                        "Comminuted",
+                        "Open",
+                        "Closed"
+                    ]
+                },
+                "pattern": {
+                    "type": "string",
+                    "enum": [
+                        "Transverse",
+                        "Oblique",
+                        "Spiral",
+                        "Segmental",
+                        "Comminuted"
+                    ]
+                },
+                "displacement": {
+                    "type": "object",
+                    "properties": {
+                        "severity": {
+                            "type": "string",
+                            "enum": [
+                                "None",
+                                "Minimal",
+                                "Moderate",
+                                "Severe"
+                            ]
+                        },
+                        "measurement_mm": {
+                            "type": "number",
+                            "description": "Displacement in millimeters"
+                        }
+                    }
+                },
+                "angulation": {
+                    "type": "object",
+                    "properties": {
+                        "degrees": {
+                            "type": "number",
+                            "description": "Angulation in degrees"
+                        },
+                        "direction": {
+                            "type": "string",
+                            "enum": [
+                                "Dorsal",
+                                "Volar",
+                                "Medial",
+                                "Lateral"
+                            ]
+                        }
+                    }
+                },
+                "severity": {
+                    "type": "string",
+                    "enum": [
+                        "Minor",
+                        "Moderate",
+                        "Severe",
+                        "Critical"
+                    ],
+                    "description": "Overall fracture severity"
+                }
+            }
+        },
+        "ai_predictions": {
+            "type": "object",
+            "required": [
+                "ensemble",
+                "individual_models",
+                "model_agreement"
+            ],
+            "properties": {
+                "ensemble": {
+                    "type": "object",
+                    "properties": {
+                        "prediction": {
+                            "type": "string",
+                            "enum": [
+                                "Fractured",
+                                "Non-Fractured"
+                            ]
+                        },
+                        "confidence": {
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                        }
+                    }
+                },
+                "individual_models": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "model_name": {
+                                "type": "string",
+                                "enum": [
+                                    "ResNet50",
+                                    "EfficientNetB0",
+                                    "EfficientNetB1"
+                                ]
+                            },
+                            "confidence": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 100
+                            }
+                        }
+                    }
+                },
+                "model_agreement": {
+                    "type": "string",
+                    "enum": [
+                        "High",
+                        "Moderate",
+                        "Low"
+                    ],
+                    "description": "Level of agreement between models"
+                },
+                "variance": {
+                    "type": "number",
+                    "description": "Variance between model predictions"
+                }
+            }
+        },
+        "clinical_significance": {
+            "type": "object",
+            "properties": {
+                "urgency": {
+                    "type": "string",
+                    "enum": [
+                        "Routine",
+                        "Urgent",
+                        "Emergency"
+                    ]
+                },
+                "stability": {
+                    "type": "string",
+                    "enum": [
+                        "Stable",
+                        "Unstable"
+                    ]
+                },
+                "complications_risk": {
+                    "type": "string",
+                    "enum": [
+                        "Low",
+                        "Moderate",
+                        "High"
+                    ]
+                }
+            }
+        },
+        "recommendations": {
+            "type": "object",
+            "required": [
+                "primary_actions"
+            ],
+            "properties": {
+                "primary_actions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Immediate recommended actions"
+                },
+                "follow_up": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "description": "Follow-up recommendations"
+                },
+                "specialist_referral": {
+                    "type": "object",
+                    "properties": {
+                        "required": {
+                            "type": "boolean"
+                        },
+                        "specialist_type": {
+                            "type": "string",
+                            "description": "Type of specialist (e.g., Orthopedic surgeon)"
+                        },
+                        "timeline": {
+                            "type": "string",
+                            "enum": [
+                                "Immediate",
+                                "Within 24h",
+                                "Within 1 week",
+                                "Routine"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "important_notes": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Critical observations or warnings"
+        },
+        "disclaimer": {
+            "type": "string",
+            "description": "Standard medical AI disclaimer",
+            "default": "This is an AI-assisted analysis. Final diagnosis must be confirmed by a qualified radiologist or physician."
+        }
+    }
+}

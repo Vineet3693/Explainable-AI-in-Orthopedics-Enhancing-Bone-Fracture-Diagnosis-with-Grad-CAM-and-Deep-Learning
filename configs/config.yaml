@@ -1,0 +1,61 @@
+# Main configuration file for Fracture Detection AI
+
+project:
+  name: fracture-detection-ai
+  version: 1.0.0
+  description: AI-powered bone fracture detection system
+
+data:
+  image_size: 224
+  batch_size: 32
+  num_classes: 2
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+
+model:
+  architecture: resnet50 # Options: vgg16, resnet50, efficientnet
+  pretrained: true
+  freeze_layers: 143
+  dropout_rate: 0.5
+
+training:
+  epochs: 50
+  learning_rate: 0.0001
+  optimizer: adam
+  loss: binary_crossentropy
+  early_stopping_patience: 10
+  reduce_lr_patience: 5
+
+validation:
+  enabled: true
+  min_image_size: 224
+  max_image_size: 4096
+  max_file_size_mb: 50
+  allowed_formats: ["png", "jpg", "jpeg", "dicom", "dcm"]
+  min_quality_score: 60
+  enable_anatomy_detection: true
+  reject_non_xray: true
+
+llm:
+  gemini:
+    model: gemini-pro
+    temperature: 0.2
+    max_tokens: 2048
+  groq:
+    model: llama-3.1-70b-versatile
+    temperature: 0.3
+    max_tokens: 1024
+
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  grafana_port: 3000
+  log_level: INFO
+  metrics_interval_seconds: 60
+
+deployment:
+  api_host: 0.0.0.0
+  api_port: 8000
+  streamlit_port: 8501
+  workers: 4

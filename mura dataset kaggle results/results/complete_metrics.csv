@@ -1,0 +1,4 @@
+Model,Accuracy,Precision,Recall,F1 Score,AUC-ROC
+VGG16,0.7701,0.8177,0.6686,0.7357,0.8366
+EfficientNetB0,0.7216,0.7356,0.6529,0.6918,0.7931
+EfficientNetB1,0.7163,0.7498,0.6111,0.6734,0.7751

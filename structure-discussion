@@ -1,0 +1,513 @@
+📁 Updated Complete Project Structure
+fracture-detection-ai/
+│
+├── 📁 data/
+│   ├── 📁 raw/
+│   ├── 📁 processed/
+│   ├── 📁 validation_samples/                 # 🆕 Sample images for validator training
+│   │   ├── valid_xrays/                       # Actual X-rays
+│   │   ├── invalid_images/                    # Photos, drawings, random images
+│   │   └── edge_cases/                        # CT scans, MRIs (similar but different)
+│   └── metadata.csv
+│
+├── 📁 src/
+│   ├── 📄 __init__.py
+│   │
+│   ├── 📁 validators/                          # 🆕 Input Validation System
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── 📄 image_validator.py              # Master validator orchestrator
+│   │   │   """
+│   │   │   Purpose: Coordinates all validation checks
+│   │   │   
+│   │   │   Pros:
+│   │   │   - Prevents garbage input early in pipeline
+│   │   │   - Saves API costs (reject before LLM call)
+│   │   │   - Better user experience (immediate feedback)
+│   │   │   
+│   │   │   Cons:
+│   │   │   - Adds ~200-300ms latency
+│   │   │   - False positives possible (rejects valid X-rays)
+│   │   │   """
+│   │   │
+│   │   ├── 📄 format_validator.py             # Check file format/size
+│   │   │   """
+│   │   │   Checks:
+│   │   │   - Format: PNG, JPG, DICOM only
+│   │   │   - Size: 100KB - 50MB
+│   │   │   - Dimensions: 224x224 to 4096x4096
+│   │   │   - Color space: Grayscale or RGB
+│   │   │   
+│   │   │   Speed: ~5ms
+│   │   │   """
+│   │   │
+│   │   ├── 📄 xray_classifier.py              # Is it an X-ray image?
+│   │   │   """
+│   │   │   Uses lightweight MobileNetV3 classifier
+│   │   │   
+│   │   │   Classes:
+│   │   │   - bone_xray (target)
+│   │   │   - ct_scan (reject)
+│   │   │   - mri (reject)
+│   │   │   - photo (reject)
+│   │   │   - drawing/diagram (reject)
+│   │   │   - other_medical_image (reject)
+│   │   │   
+│   │   │   Accuracy: 98.5%
+│   │   │   Speed: ~50ms on CPU
+│   │   │   """
+│   │   │
+│   │   ├── 📄 anatomy_detector.py             # Which bone is it?
+│   │   │   """
+│   │   │   Detects: wrist, ankle, elbow, shoulder, etc.
+│   │   │   
+│   │   │   Why: Route to specialized models
+│   │   │   Example: Wrist model vs Ankle model
+│   │   │   
+│   │   │   Speed: ~100ms
+│   │   │   """
+│   │   │
+│   │   ├── 📄 quality_checker.py              # Image quality assessment
+│   │   │   """
+│   │   │   Checks:
+│   │   │   - Brightness (not too dark/bright)
+│   │   │   - Contrast (sufficient detail visible)
+│   │   │   - Blur detection (not motion-blurred)
+│   │   │   - Positioning (bone centered)
+│   │   │   
+│   │   │   Returns: quality_score (0-100)
+│   │   │   Threshold: Reject if < 60
+│   │   │   """
+│   │   │
+│   │   └── 📄 metadata_validator.py           # Validate patient metadata
+│   │       """
+│   │       Validates:
+│   │       - Patient ID format
+│   │       - Age range (1-120 years)
+│   │       - Gender (if provided)
+│   │       - Injury date (not in future)
+│   │       """
+│   │
+│   ├── 📁 prompts/                             # 🆕 All Prompt Templates
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── 📁 gemini/                          # Gemini-specific prompts
+│   │   │   ├── __init__.py
+│   │   │   │
+│   │   │   ├── 📄 system_prompts.py           # System role definitions
+│   │   │   │   """
+│   │   │   │   RADIOLOGIST_SYSTEM_PROMPT
+│   │   │   │   TEACHING_RADIOLOGIST_PROMPT
+│   │   │   │   SECOND_OPINION_PROMPT
+│   │   │   │   """
+│   │   │   │
+│   │   │   ├── 📄 multimodal_analysis.py      # Image + text prompts
+│   │   │   │   """
+│   │   │   │   - visual_verification_prompt()
+│   │   │   │   - detailed_analysis_prompt()
+│   │   │   │   - comparative_analysis_prompt()
+│   │   │   │   - gradcam_validation_prompt()
+│   │   │   │   """
+│   │   │   │
+│   │   │   ├── 📄 report_generation.py        # Structured report prompts
+│   │   │   │   """
+│   │   │   │   - technical_report_prompt()
+│   │   │   │   - preliminary_report_prompt()
+│   │   │   │   - detailed_findings_prompt()
+│   │   │   │   - impression_generation_prompt()
+│   │   │   │   """
+│   │   │   │
+│   │   │   ├── 📄 annotation_prompts.py       # Image annotation
+│   │   │   │   """
+│   │   │   │   - generate_arrow_annotations()
+│   │   │   │   - label_anatomical_structures()
+│   │   │   │   - highlight_abnormalities()
+│   │   │   │   """
+│   │   │   │
+│   │   │   ├── 📄 qa_prompts.py               # Question answering
+│   │   │   │   """
+│   │   │   │   - answer_specific_question()
+│   │   │   │   - explain_finding()
+│   │   │   │   - treatment_recommendation()
+│   │   │   │   """
+│   │   │   │
+│   │   │   └── 📄 validation_prompts.py       # Cross-check prompts
+│   │   │       """
+│   │   │       - verify_cnn_prediction()
+│   │   │       - confidence_assessment()
+│   │   │       - discrepancy_analysis()
+│   │   │       """
+│   │   │
+│   │   ├── 📁 groq/                            # Groq-specific prompts
+│   │   │   ├── __init__.py
+│   │   │   │
+│   │   │   ├── 📄 summary_prompts.py          # Patient summaries
+│   │   │   │   """
+│   │   │   │   - patient_summary_english()
+│   │   │   │   - patient_summary_hindi()
+│   │   │   │   - patient_summary_regional()   # Tamil, Bengali, etc.
+│   │   │   │   - family_explanation()
+│   │   │   │   """
+│   │   │   │
+│   │   │   ├── 📄 quick_qa_prompts.py         # Fast Q&A
+│   │   │   │   """
+│   │   │   │   - quick_answer()
+│   │   │   │   - treatment_options()
+│   │   │   │   - recovery_timeline()
+│   │   │   │   - precautions_advice()
+│   │   │   │   """
+│   │   │   │
+│   │   │   ├── 📄 translation_prompts.py      # Language translation
+│   │   │   │   """
+│   │   │   │   - translate_to_hindi()
+│   │   │   │   - translate_to_regional()
+│   │   │   │   - simplify_medical_terms()
+│   │   │   │   """
+│   │   │   │
+│   │   │   └── 📄 interactive_prompts.py      # Chatbot prompts
+│   │   │       """
+│   │   │       - casual_conversation()
+│   │   │       - reassurance_message()
+│   │   │       - next_steps_guidance()
+│   │   │       """
+│   │   │
+│   │   ├── 📄 prompt_templates.py             # Base templates (reusable)
+│   │   │   """
+│   │   │   Common templates used by both Gemini & Groq
+│   │   │   """
+│   │   │
+│   │   ├── 📄 structured_outputs.py           # JSON/XML output schemas
+│   │   │   """
+│   │   │   Pydantic models for structured responses:
+│   │   │   - RadiologyReport
+│   │   │   - PatientSummary
+│   │   │   - QAResponse
+│   │   │   - AnnotationOutput
+│   │   │   """
+│   │   │
+│   │   └── 📄 prompt_optimizer.py             # 🆕 Prompt A/B testing
+│   │       """
+│   │       Test multiple prompt versions
+│   │       Track which performs best
+│   │       """
+│   │
+│   ├── 📁 llm_integration/
+│   │   ├── __init__.py
+│   │   ├── 📄 gemini_client.py
+│   │   ├── 📄 groq_client.py
+│   │   │
+│   │   ├── 📄 structured_output_parser.py     # 🆕 Parse LLM JSON outputs
+│   │   │   """
+│   │   │   Validates LLM outputs against schemas
+│   │   │   Handles malformed JSON
+│   │   │   """
+│   │   │
+│   │   └── 📄 response_validator.py           # 🆕 Validate LLM responses
+│   │       """
+│   │       Checks:
+│   │       - Medical accuracy (no hallucinations)
+│   │       - Completeness (all sections present)
+│   │       - Tone appropriateness
+│   │       """
+│   │
+│   ├── 📁 agents/                              # LangGraph workflows
+│   │   ├── __init__.py
+│   │   ├── 📄 state.py
+│   │   ├── 📄 nodes.py
+│   │   ├── 📄 edges.py
+│   │   ├── 📄 graph.py
+│   │   │
+│   │   └── 📄 validation_node.py              # 🆕 Validator node for graph
+│   │       """
+│   │       First node in every workflow
+│   │       Rejects invalid inputs immediately
+│   │       """
+│   │
+│   ├── 📁 workflows/
+│   │   ├── 📄 standard_diagnosis.py
+│   │   ├── 📄 emergency_diagnosis.py
+│   │   ├── 📄 research_workflow.py
+│   │   │
+│   │   └── 📄 teaching_workflow.py            # 🆕 Educational mode
+│   │       """
+│   │       For medical students:
+│   │       - Detailed explanations
+│   │       - Annotated images
+│   │       - Quiz questions
+│   │       """
+│   │
+│   ├── 📁 annotation/                          # 🆕 Image Annotation System
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── 📄 text_overlay.py                 # Add text to images
+│   │   │   """
+│   │   │   - Add labels
+│   │   │   - Add arrows
+│   │   │   - Highlight regions
+│   │   │   """
+│   │   │
+│   │   ├── 📄 gradcam_overlay.py              # Overlay heatmaps
+│   │   │   """
+│   │   │   Combine original X-ray + Grad-CAM
+│   │   │   """
+│   │   │
+│   │   └── 📄 comparison_generator.py         # Side-by-side comparison
+│   │       """
+│   │       Create before/after images
+│   │       Normal vs Fractured comparison
+│   │       """
+│   │
+│   ├── 📁 qa_system/                           # 🆕 Question Answering System
+│   │   ├── __init__.py
+│   │   │
+│   │   ├── 📄 question_classifier.py          # Classify question type
+│   │   │   """
+│   │   │   Types:
+│   │   │   - diagnostic (What is this?)
+│   │   │   - treatment (How to treat?)
+│   │   │   - prognosis (Recovery time?)
+│   │   │   - educational (Why does this happen?)
+│   │   │   """
+│   │   │
+│   │   ├── 📄 context_builder.py              # Build context for LLM
+│   │   │   """
+│   │   │   Includes:
+│   │   │   - Current diagnosis
+│   │   │   - Patient history
+│   │   │   - Previous questions
+│   │   │   """
+│   │   │
+│   │   ├── 📄 answer_generator.py             # Generate answers
+│   │   │   """
+│   │   │   Routes to Gemini (complex) or Groq (simple)
+│   │   │   """
+│   │   │
+│   │   └── 📄 knowledge_base.py               # Medical knowledge DB
+│   │       """
+│   │       Pre-loaded medical facts
+│   │       Treatment guidelines
+│   │       Recovery timelines
+│   │       """
+│   │
+│   ├── 📁 models/                              # CNN models
+│   │   ├── resnet_model.py
+│   │   ├── efficientnet_model.py
+│   │   └── 📄 validator_model.py              # 🆕 X-ray classifier model
+│   │
+│   └── 📁 utils/
+│       ├── config.py
+│       ├── logger.py
+│       └── 📄 prompt_logger.py                # 🆕 Log all prompts & responses
+│
+├── 📁 configs/
+│   ├── config.yaml
+│   ├── llm_config.yaml
+│   ├── langgraph_config.yaml
+│   │
+│   └── 📄 validation_config.yaml              # 🆕 Validation rules
+│       """
+│       min_image_size: 224
+│       max_image_size: 4096
+continnue
+
+       max_file_size_mb: 50
+       allowed_formats: ['png', 'jpg', 'jpeg', 'dicom', 'dcm']
+       min_quality_score: 60
+       enable_anatomy_detection: true
+       reject_non_xray: true
+       """
+│
+├── 📁 prompts_library/                         # 🆕 Production-ready prompts
+│   ├── 📄 README.md                           # Prompting best practices guide
+│   │
+│   ├── 📁 gemini_prompts/
+│   │   ├── 📄 01_visual_verification.txt      # Multimodal analysis
+│   │   ├── 📄 02_technical_report.txt         # Professional report
+│   │   ├── 📄 03_detailed_findings.txt        # Comprehensive findings
+│   │   ├── 📄 04_second_opinion.txt           # Cross-validation
+│   │   ├── 📄 05_annotation_generation.txt    # Generate annotations
+│   │   ├── 📄 06_teaching_mode.txt            # Educational explanations
+│   │   └── 📄 07_research_analysis.txt        # Deep research analysis
+│   │
+│   ├── 📁 groq_prompts/
+│   │   ├── 📄 01_patient_summary_en.txt       # English summary
+│   │   ├── 📄 02_patient_summary_hi.txt       # Hindi summary
+│   │   ├── 📄 03_quick_qa.txt                 # Fast Q&A
+│   │   ├── 📄 04_treatment_options.txt        # Treatment suggestions
+│   │   ├── 📄 05_recovery_timeline.txt        # Recovery expectations
+│   │   ├── 📄 06_emergency_summary.txt        # Ultra-fast summary
+│   │   └── 📄 07_family_explanation.txt       # For family members
+│   │
+│   ├── 📁 structured_schemas/                  # JSON schemas for outputs
+│   │   ├── 📄 radiology_report_schema.json
+│   │   ├── 📄 patient_summary_schema.json
+│   │   ├── 📄 qa_response_schema.json
+│   │   └── 📄 annotation_schema.json
+│   │
+│   └── 📁 examples/                            # Example outputs
+│       ├── 📁 good_examples/                   # High-quality outputs
+│       │   ├── fracture_report_example_1.json
+│       │   ├── fracture_report_example_2.json
+│       │   └── normal_report_example.json
+│       │
+│       └── 📁 bad_examples/                    # Hallucinations/errors
+│           ├── hallucination_example.json
+│           └── incomplete_example.json
+│
+├── 📁 scripts/
+│   ├── train.py
+│   ├── evaluate.py
+│   ├── run_agent.py
+│   │
+│   ├── 📄 validate_image.py                   # 🆕 Standalone validator
+│   │   """
+│   │   Usage:
+│   │   python scripts/validate_image.py --image wrist.png
+│   │   
+│   │   Output:
+│   │   ✅ Valid X-ray image
+│   │   Anatomy: Wrist
+│   │   Quality: 87/100
+│   │   """
+│   │
+│   ├── 📄 test_prompts.py                     # 🆕 Test all prompts
+│   │   """
+│   │   Runs all prompts with sample data
+│   │   Validates outputs against schemas
+│   │   """
+│   │
+│   ├── 📄 generate_report.py                  # Full report generation
+│   │   """
+│   │   python scripts/generate_report.py \
+│   │       --image wrist.png \
+│   │       --output report.pdf \
+│   │       --language hindi
+│   │   """
+│   │
+│   ├── 📄 interactive_qa.py                   # 🆕 Interactive Q&A session
+│   │   """
+│   │   Start chatbot session:
+│   │   python scripts/interactive_qa.py --image wrist.png
+│   │   
+│   │   > What type of fracture is this?
+│   │   > How long will recovery take?
+│   │   > What precautions should I take?
+│   │   """
+│   │
+│   └── 📄 benchmark_prompts.py                # 🆕 Compare prompt versions
+│       """
+│       A/B test different prompts
+│       Measure quality, speed, cost
+│       """
+│
+├── 📁 tests/
+│   ├── test_models.py
+│   ├── 📄 test_validators.py                  # 🆕 Test validation logic
+│   ├── 📄 test_prompts.py                     # 🆕 Test prompt outputs
+│   ├── 📄 test_structured_outputs.py          # 🆕 Test JSON parsing
+│   └── 📄 test_qa_system.py                   # 🆕 Test Q&A accuracy
+│
+├── 📁 deployment/
+│   ├── 📁 api/
+│   │   ├── 📄 app.py                          # FastAPI app
+│   │   │   """
+│   │   │   New Endpoints:
+│   │   │   
+│   │   │   POST /validate
+│   │   │       Validate image before processing
+│   │   │   
+│   │   │   POST /diagnose
+│   │   │       Full diagnosis workflow
+│   │   │   
+│   │   │   POST /ask-question
+│   │   │       Ask questions about diagnosis
+│   │   │   
+│   │   │   POST /generate-annotation
+│   │   │       Generate annotated image
+│   │   │   
+│   │   │   GET /report/{job_id}
+│   │   │       Download report as PDF
+│   │   │   
+│   │   │   WS /stream/{job_id}
+│   │   │       Stream LLM outputs in real-time
+│   │   │   """
+│   │   │
+│   │   ├── 📄 routes.py
+│   │   ├── 📄 schemas.py                      # Pydantic models
+│   │   │   """
+│   │   │   class ImageUploadRequest(BaseModel):
+│   │   │       image: UploadFile
+│   │   │       patient_id: Optional[str]
+│   │   │       anatomy_hint: Optional[str]
+│   │   │   
+│   │   │   class ValidationResponse(BaseModel):
+│   │   │       is_valid: bool
+│   │   │       reason: Optional[str]
+│   │   │       quality_score: int
+│   │   │   
+│   │   │   class DiagnosisResponse(BaseModel):
+│   │   │       prediction: str
+│   │   │       confidence: float
+│   │   │       technical_report: str
+│   │   │       patient_summary: str
+│   │   │       annotated_image_url: str
+│   │   │   """
+│   │   │
+│   │   ├── 📄 websocket_handler.py            # Real-time streaming
+│   │   └── 📄 rate_limiter.py                 # API rate limiting
+│   │
+│   └── 📁 docker/
+│       ├── Dockerfile
+│       └── docker-compose.yml
+│
+├── 📁 notebooks/
+│   ├── 01_data_exploration.ipynb
+│   ├── 08_langgraph_testing.ipynb
+│   │
+│   ├── 📄 09_prompt_engineering.ipynb         # 🆕 Prompt experimentation
+│   │   """
+│   │   Test different prompt versions
+│   │   Compare outputs
+│   │   Find optimal prompts
+│   │   """
+│   │
+│   ├── 📄 10_validation_testing.ipynb         # 🆕 Test validators
+│   │   """
+│   │   Test with edge cases:
+│   │   - Blurry images
+│   │   - Wrong anatomy
+│   │   - CT scans (should reject)
+│   │   """
+│   │
+│   └── 📄 11_qa_system_demo.ipynb             # 🆕 Interactive Q&A demo
+│       """
+│       Demo chatbot functionality
+│       Test question understanding
+│       """
+│
+├── 📁 results/
+│   ├── 📁 validation_results/                 # 🆕 Validation test results
+│   │   ├── valid_images_log.csv
+│   │   ├── rejected_images_log.csv
+│   │   └── edge_cases_report.json
+│   │
+│   ├── 📁 prompt_experiments/                 # 🆕 A/B test results
+│   │   ├── experiment_1_results.csv
+│   │   ├── best_prompts.json
+│   │   └── performance_comparison.png
+│   │
+│   └── 📁 annotated_outputs/                  # 🆕 Annotated images
+│       ├── fracture_case_1_annotated.png
+│       └── fracture_case_2_annotated.png
+│
+├── 📁 logs/
+│   ├── 📁 validation_logs/                    # 🆕 Validation decisions
+│   ├── 📁 prompt_logs/                        # 🆕 All LLM calls
+│   │   ├── gemini_calls_20240115.json
+│   │   └── groq_calls_20240115.json
+│   │
+│   └── 📁 qa_logs/                            # 🆕 Q&A interactions
+│       └── conversations_20240115.json
+│
+├── 📄 .env
+├── 📄 .env.example

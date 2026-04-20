@@ -1,0 +1,41 @@
+# Fracture Detection AI - Dependency Requirements
+
+# Core AI & ML
+numpy>=1.24.0
+pandas>=2.0.0
+opencv-python-headless>=4.8.0
+torch>=2.0.0
+torchvision>=0.15.0
+scikit-learn>=1.3.0
+pillow>=10.0.0
+
+# LLM Integration
+google-generativeai>=0.3.0  # Gemini
+groq>=0.4.0                 # Groq
+langchain>=0.1.0            # LangChain (if used for complex flows)
+langgraph>=0.0.10           # Workflows
+
+# Web API & Server
+fastapi>=0.100.0
+uvicorn>=0.23.0
+python-multipart>=0.0.6
+requests>=2.31.0
+
+# Monitoring & Observability
+prometheus-client>=0.17.0   # Metrics
+structlog>=23.1.0           # Structured Logging
+
+# Data Validation
+pydantic>=2.0.0
+
+# Testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# Utilities
+pyyaml>=6.0
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+click>=8.1.0               # CLI tools

@@ -1,0 +1,41 @@
+# EfficientNetB0 Configuration
+
+## Model Settings
+model:
+  name: efficientnet_b0
+  input_size: 224
+  dropout: 0.5
+  l2_regularization: 0.01
+
+## Training Settings
+training:
+  # Total epochs: 50 (25 + 25)
+  total_epochs: 50
+
+  phase1:
+    epochs: 25
+    learning_rate: 0.001
+    batch_size: 32
+    freeze_base: true
+
+  phase2:
+    epochs: 25
+    learning_rate: 0.0001
+    batch_size: 32
+    unfreeze_layers: 30
+
+## Data Balancing
+balancing:
+  focal_loss:
+    alpha: 0.75
+    gamma: 2.0
+  class_weights:
+    auto_calculate: true
+
+## Expected Performance
+performance:
+  accuracy: 0.935
+  recall: 0.945
+  auc: 0.961
+  training_time_gpu: "1 hour"
+  training_time_cpu: "4 hours"
